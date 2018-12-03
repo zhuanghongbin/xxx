@@ -1,0 +1,36 @@
+@import "./variables.scss";
+// $--color-text-cancel: #adadad;
+
+/* Button
+-------------------------- */
+// $--button-primary-border: $--color-secondary;
+// $--button-primary-fill: $--color-secondary;
+
+// $--button-danger-color: $--color-text-cancel;
+
+$--button-hover-tint-percent: 30%;
+$--button-active-shade-percent: 10%;
+
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";
+// .el-button--default:hover, .el-button--default:focus, 
+.el-button--primary.is-plain, .el-button--success.is-plain, .el-button--info.is-plain, .el-button--warning.is-plain, .el-button--danger.is-plain{
+  background-color: #ffffff;
+}
+.el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li{
+  background-color: #f4f4f5;
+}
+.el-icon-caret-right {
+  &.expanded {
+    transform: rotate(90deg);
+    &:before {
+      content: "\E604";
+    }
+  }
+  &:before {
+    content: "\E604";
+  }
+}
