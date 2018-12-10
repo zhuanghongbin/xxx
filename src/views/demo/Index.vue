@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
     <tool-tip :placement="'top-end'" text="自定义文本信息"></tool-tip>
-    <Linebar />
-    <Linebar :status="'primary'"/>
-    <Linebar :status="'success'"/>
-    <Linebar :status="'warning'"/>
-    <Linebar :status="'danger'"/>
-    <Linebar :size="'small'" :status="'primary'"/>
-    <Linebar :size="'big'" :status="'primary'"/>
+    <linebar />
+    <linebar :status="'primary'"/>
+    <linebar :status="'success'"/>
+    <linebar :status="'warning'"/>
+    <linebar :status="'danger'"/>
+    <linebar :size="'small'" :status="'primary'"/>
+    <linebar :size="'big'" :status="'primary'"/>
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="请输入搜索消息标题" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-select v-model="listQuery.readStatus" :placeholder="'阅读状态'" clearable class="filter-item" style="width: 120px">
@@ -18,7 +18,8 @@
       <!-- <el-select v-model="batchOperationSelect" :placeholder="'批量操作'" clearable class="filter-item" style="width: 120px">
         <el-option v-for="item in batchOperation" :key="item.key" :label="item.display_name" :value="item.key"/>
       </el-select> -->
-      <dropdown-menu :isActive.sync="dropdownActive" :items="articleList" style="margin-left: 10px;" title="批量操作" @dropdownMenuOption="dropdownMenuOption"></dropdown-menu>
+      <!-- <dropdown-menu :isActive.sync="dropdownActive" :items="articleList" style="margin-left: 10px;" title="批量操作" @dropdownMenuOption="dropdownMenuOption"></dropdown-menu> -->
+      <dropdown-menu :items="articleList" style="margin-left: 10px;" title="批量操作" @dropdownMenuOption="dropdownMenuOption"></dropdown-menu>
     </div>
     <el-table
       v-loading="listLoading"
@@ -165,7 +166,7 @@ export default {
       ],
       readStatus,
       batchOperation, // 批量操作
-      dropdownActive: false,
+      // dropdownActive: false,
       selectId: [], // 批量操作选中的数据id
       /** 表格 */
       // sortable: null, // 表格拖拽
@@ -216,7 +217,6 @@ export default {
   methods: {
     // dropdown
     dropdownMenuOption (val) {
-      console.log(val, 'ssssssssssssssssssssss')
       if (val === 'start') {
         // todo 启用
       } else if (val === 'stop') {
@@ -225,7 +225,7 @@ export default {
         // 删除
         this.delSelectData(this.selectId)
       }
-      this.dropdownActive = false
+      // this.dropdownActive = false
     },
     // 遍历数组，遍历出对象中的某个key,重新组成数组 [{name: 'jim', age: 8}, {name: 'tom', age: 9}] => ['jim', 'tom']
     mapObjArrVal (arr, objKey) {

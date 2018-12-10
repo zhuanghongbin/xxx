@@ -27,13 +27,13 @@
 </template>
 <script>
 import TreeComp from '@/components/Tree'
-import linebar from '@/components/Linebar'
+import Linebar from '@/components/Linebar'
 
 export default {
   name: 'Tree',
   components: {
     TreeComp,
-    linebar
+    Linebar
   },
   filters: {
   },

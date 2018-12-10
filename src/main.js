@@ -3,6 +3,10 @@
 import Vue from 'vue'
 import App from './App'
 
+// 高德地图组件
+// import VueAMap, {lazyAMapApiLoaderInstance} from 'vue-amap'
+import VueAMap from 'vue-amap'
+
 // 全局路由守卫（权限）
 import './permission'
 import '@/directive/viewers'
@@ -39,7 +43,20 @@ Vue.use(ElementUI, {size: 'small', zIndex: 3000})
 // // 按需挂载ElementUI组件
 // Vue.use(Button)
 // Vue.use(Select)
-
+Vue.use(VueAMap)
+VueAMap.initAMapApiLoader({
+  key: '2ac731ec05dc74b577cd973c52e7a92a',
+  plugin: ['AMap.PlaceSearch'],
+  // 默认高德 sdk 版本为 1.4.4
+  v: '1.4.4',
+  uiVersion: '1.0'
+})
+// lazyAMapApiLoaderInstance.load().then(() => {
+//   // your code ...
+//   this.map = new AMap.Map('amapContainer', {
+//     center: new AMap.LngLat(121.59996, 31.197646)
+//   })
+// })
 // 注册全局过滤器
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

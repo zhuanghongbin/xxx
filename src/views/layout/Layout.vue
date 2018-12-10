@@ -15,7 +15,7 @@
       background: #3e4558;
       left: 180px;
       transition: left .28s;
-      z-index: 99;
+      z-index: 999;
     }
   }
   // 隐藏sidebar 设置left

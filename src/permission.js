@@ -17,6 +17,7 @@ NProgress.configure({ showSpinner: false })// NProgress Configuration
 router.beforeEach((to, from, next) => {
   console.log(to, 'to')
   console.log(store.getters.roles.length, 'store.getters.roles.length')
+  NProgress.start() // start progress bar
   if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
     store.dispatch('GetUserInfo').then(res => { // 拉取user_info
       const roles = ['admin'] // note: roles must be a array! such as: ['editor','develop']
@@ -31,6 +32,7 @@ router.beforeEach((to, from, next) => {
       store.dispatch('FedLogOut').then(() => {
         Message.error(err || 'Verification failed, please login again')
         next({ path: '/' })
+        NProgress.done()
       })
     })
   } else {

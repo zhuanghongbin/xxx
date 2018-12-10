@@ -1,100 +1,70 @@
 <template>
-  <div>
-    <el-input
-      placeholder="输入关键字进行过滤"
-      v-model="filterText"
-      v-if="showFilter"
-    >
-    </el-input>
-    <el-tree
-      :ref="nodeName"
-      :data="data"
-      :props="defaultProps"
-      :node-key="nodeKey"
-      :default-checked-keys="defaultCheckedKeys"
-      :show-checkbox="showCheckbox"
-      :default-expand-all="defaultExpandAll"
-      @check-change="checkChange"
-      :filter-node-method="filterNode"
-    ></el-tree>
-  </div>
+  <el-tabs
+    v-model="activeName"
+    @tab-click="handleClick"
+    :type="type"
+    :tab-position="tabPosition"
+    :set-tab-select="setTabSelect"
+    :editable="editable"
+  >
+    <el-tab-pane :label="item.label" :name="item.name" v-for="item in newData" :key="item.name">
+      <span slot="label" v-if="item.icon"><i :class="item.icon"></i> {{item.label}}</span>
+      <!-- <span slot="label" v-else>item.label</span> -->
+      <slot :name="item.name"></slot>
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
 export default {
   props: {
-    showFilter: {
-      type: Boolean,
-      default: false
-    },
-    nodeName: {
+    // 默认空是 线条样式， 卡片化: border-card  选项卡: card
+    type: {
       type: String,
-      default: 'tree'
+      default: ''
     },
+    // 标签一共有四个方向的设置 tabPosition="left|right|top|bottom" 默认是'top'
+    tabPosition: {
+      type: String,
+      default: 'top'
+    },
+    // 数据格式[{label: '标签名', name: '标签对应的name'},{}] ===> [{label: '用户管理', name: 'user'}, {label: '配置管理', name: 'config'}]
     data: {
       type: Array,
       default: () => {
-        return []
+        return [{}]
       }
     },
-    defaultProps: {
-      type: Object,
-      default: () => {
-        return {}
-      }
-    },
-    // 设置节点映射的key, 默认是id
-    nodeKey: {
+    // 设置
+    setTabSelect: {
       type: String,
-      default: 'id'
+      default: ''
     },
-    // 选中的节点
-    defaultCheckedKeys: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    },
-    // 编辑或列表展示
-    showCheckbox: {
-      type: Boolean,
-      default: false
-    },
-    // 展开收缩
-    defaultExpandAll: {
+    // 是否可以编辑
+    editable: {
       type: Boolean,
       default: false
     }
   },
   data () {
     return {
-      filterText: '',
-      checkedKeys: []
+      activeName: this.setTabSelect || this.data[0]['name']
+    }
+  },
+  computed: {
+    newData () {
+      return this.data
     }
   },
   watch: {
-    checkedKeys (val) {
-      this.$emit('treeChange', val)
-    },
-    filterText (val) {
-      this.$refs[this.nodeName].filter(val)
-    }
   },
   methods: {
-    checkChange (data) {
-      this.checkedKeys = this.$refs[this.nodeName].getCheckedKeys()
-    },
-    filterNode (value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
+    handleClick (tab, event) {
+      this.$emit('toggleTabs', tab.index, tab.name, tab)
+      // console.log(tab.index, tab.name, tab)
     }
   },
   created () {
-    this.checkedKeys = this.defaultCheckedKeys
   }
 }
 </script>
-
-<style rel="stylesheet/scss" lang="scss" scoped>
-
-</style>

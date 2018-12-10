@@ -2,7 +2,8 @@
   <div class="app-container">
     <el-row>
       <el-col :sm="24" :md="12">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <!-- 为了方便管理，form表单用了label-width 最好设置成[100px, 140px, 180px, 220px]这四个值 -->
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
           <el-form-item label="活动名称" prop="name">
             <el-input v-model="ruleForm.name"></el-input>
           </el-form-item>
@@ -10,7 +11,6 @@
             <el-select
               v-model="ruleForm.region"
               placeholder="请选择活动区域"
-              value-key="item.value"
             >
               <el-option
                 v-for="item in ruleForm.tagSelOption"
@@ -20,6 +20,27 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <!-- 省市区 -->
+          <el-form-item style="margin-bottom:0px;">
+            <!-- province-and-city的lable 同form一样有4个预设值对应[100px, 140px, 180px, 220px] ==> [xs, sm, md, lg] -->
+            <province-and-city
+              :default-data.sync="ruleForm.defaultData"
+              :address.sync="ruleForm.address"
+              :showAddress="true"
+              :checked="true" ref="areaForm"
+              label-width-status="xs"
+              label="地区"
+              >
+            </province-and-city>
+          </el-form-item>
+          <el-form-item >
+            <gaode-map ref="gaodeMap" :marker-addres="ruleForm.address" :marker-area="ruleForm.areaName" :marker-position.sync="markerPosition"></gaode-map>
+          </el-form-item>
+          <el-form-item label="标注">
+            <el-input v-model="markerPosition" disabled placeholder="地址标注"></el-input>
+            <el-button type="warning" @click="searchArea">搜索标注</el-button>
+          </el-form-item>
+          <!-- <province-and-city :default-data="ruleForm.defaultData" @areaMapChange="(data) => {ruleForm.defaultData = data}"></province-and-city> -->
           <el-form-item label="多标签选择" prop="tagSelect">
             <el-select
               v-model="ruleForm.tagSelect"
@@ -112,10 +133,35 @@
   </div>
 </template>
 <script>
+// 省市区地址组件
+import ProvinceAndCity from '@/components/ProvinceAndCity'
+// 高德地图组件
+import GaodeMap from '@/components/GaodeMap'
 export default {
+  components: {
+    ProvinceAndCity,
+    GaodeMap
+  },
+  watch: {
+    'ruleForm.defaultData': {
+      handler (val) {
+        setTimeout(() => {
+          if (val.zoneName) {
+            this.ruleForm.areaName = `${val.provinceName}${val.cityName}${val.zoneName}`
+          }
+        }, 0)
+        console.log(val, 'defaultData')
+      },
+      deep: true
+    }
+  },
   data () {
     return {
       ruleForm: {
+        // defaultData: {cityCode: '440300', provinceCode: '440000', zoneCode: '440305', cityName: '深圳市', provinceName: '广东省', zoneName: '南山区', provinceList: [], cityList: [], zoneList: []}
+        defaultData: {cityCode: '440300', provinceCode: '440000', zoneCode: '440305', cityName: '', provinceName: '', zoneName: '', provinceList: [], cityList: [], zoneList: []},
+        address: '',
+        areaName: '', // 省市区字符串
         name: '',
         region: '',
         date1: '',
@@ -176,7 +222,8 @@ export default {
         tagSelect: [
           {required: true, message: '请选择一个标签', trigger: 'visible-change'}
         ]
-      }
+      },
+      markerPosition: ''
     }
   },
   computed: {
@@ -188,6 +235,19 @@ export default {
     this.clearValidate('ruleForm')
   },
   methods: {
+    searchArea () {
+      console.log(this.ruleForm.areaName, this.ruleForm.address, 'zzzzzzzz')
+      this.$refs.gaodeMap.getMarkerPointList(this.ruleForm.areaName + this.ruleForm.address)
+    },
+    // 添加标注点
+    add () {
+      let o = this.amapManager.getMap()
+      let marker = new AMap.Marker({
+        position: [121.59996, 31.177646]
+      })
+      marker.setMap(o)
+    },
+    // tagSelect 改变校验规则
     tagSelectChange (val) {
       this.rules.tagSelect = [
         {required: true, message: '请选择', trigger: 'change'}
@@ -220,15 +280,19 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          return true
         } else {
-          console.log('error submit!!')
           return false
         }
       })
+      // 如果没有设置验证this.$refs.areaForm.submitForm() 是 undefined
+      if (this.$refs.areaForm.submitForm() === false) return false
+      // todo
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()
+      // 省市区重置
+      this.$refs.areaForm.resetFields()
     },
     handleAvatarSuccess (res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
@@ -315,6 +379,10 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.amap-box{
+  width: 500px;
+  height: 375px;
 }
 // .upload-img{
 //   width: 100px;

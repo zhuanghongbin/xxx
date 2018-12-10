@@ -75,7 +75,12 @@ export function pricture (rule, value, callback) {
   common(rule, value, callback, reg, '不能为空', '格式错误')
 }
 // 英文和中文和数字 [\u4e00-\u9fa5]
-export function LetterNumberWord (rule, value, callback) {
+export function letterNumberWord (rule, value, callback) {
   const reg = /^[0-9A-Za-z\u4e00-\u9fa5]+$/
   common(rule, value, callback, reg, '不能为空', '格式错误')
+}
+export function area (rule, value, callback) {
+  console.log(value, '\\\\\\\\')
+  // const reg = /^[0-9A-Za-z\u4e00-\u9fa5]+$/
+  // common(rule, value, callback, reg, '不能为空', '格式错误')
 }
